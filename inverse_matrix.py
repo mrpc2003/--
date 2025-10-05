@@ -110,7 +110,8 @@ def input_matrix() -> Optional[Matrix]:
     """
     사용자에게 n×n 정방행렬 입력을 요청하고 검증한다.
     - n은 양의 정수여야 하며, 잘못 입력하면 재입력 요청
-    - 각 행은 공백으로 구분된 n개의 실수로 구성
+    - 각 행은 공백으로 구분된 n개의 실수(정수, 소수점, 음수, 과학적 표기법)로 구성
+    - 허용 형식: 1, -5, 2.5, -3.14, 1.23e-4, 5.67e2 등
     - 성공 시 float 기반 2차원 리스트 반환
     - EOF 입력 시 None 반환으로 종료 처리
     """
@@ -129,7 +130,11 @@ def input_matrix() -> Optional[Matrix]:
                 print("정수를 입력하세요. 예: 3")
 
         print("행렬의 각 행을 공백으로 구분하여 입력하세요.")
-        print("예: 1 2 3")
+        print("예시:")
+        print("  • 정수: 1 2 3")
+        print("  • 소수점: 1.5 2.7 3.14")
+        print("  • 음수 포함: -1 2.5 -3.7")
+        print("  • 과학적 표기법: 1.23e-4 5.67e2 -8.9e-1")
         mat: Matrix = []
         for i in range(n):
             while True:
@@ -141,7 +146,9 @@ def input_matrix() -> Optional[Matrix]:
                 try:
                     row = [float(x) for x in parts]
                 except ValueError:
-                    print("숫자만 입력하세요. 예: 1 2.5 -3")
+                    print("올바른 숫자 형식을 입력하세요.")
+                    print("허용되는 형식: 정수(1, -5), 소수점(2.5, -3.14), 과학적 표기법(1.23e-4)")
+                    print("예: 1 2.5 -3 또는 1.5 2.7 -3.14 또는 1.23e-4 5.67e2 -8.9e-1")
                     continue
                 mat.append(row)
                 break
