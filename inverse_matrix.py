@@ -2,7 +2,7 @@ import csv
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-Matrix = List[List[float]]
+Matrix = List[List[int]]
 
 
 # -----------------------------
@@ -110,9 +110,9 @@ def input_matrix() -> Optional[Matrix]:
     """
     사용자에게 n×n 정방행렬 입력을 요청하고 검증한다.
     - n은 양의 정수여야 하며, 잘못 입력하면 재입력 요청
-    - 각 행은 공백으로 구분된 n개의 실수(정수, 소수점, 음수, 과학적 표기법)로 구성
-    - 허용 형식: 1, -5, 2.5, -3.14, 1.23e-4, 5.67e2 등
-    - 성공 시 float 기반 2차원 리스트 반환
+    - 각 행은 공백으로 구분된 n개의 정수(양수, 음수, 0)로 구성
+    - 허용 형식: 1, -5, 0, 42 등
+    - 성공 시 int 기반 2차원 리스트 반환
     - EOF 입력 시 None 반환으로 종료 처리
     """
     try:
@@ -131,10 +131,9 @@ def input_matrix() -> Optional[Matrix]:
 
         print("행렬의 각 행을 공백으로 구분하여 입력하세요.")
         print("예시:")
-        print("  • 정수: 1 2 3")
-        print("  • 소수점: 1.5 2.7 3.14")
-        print("  • 음수 포함: -1 2.5 -3.7")
-        print("  • 과학적 표기법: 1.23e-4 5.67e2 -8.9e-1")
+        print("  • 양의 정수: 1 2 3")
+        print("  • 음수 포함: -1 2 -3")
+        print("  • 0 포함: 0 1 -2")
         mat: Matrix = []
         for i in range(n):
             while True:
@@ -144,11 +143,12 @@ def input_matrix() -> Optional[Matrix]:
                     print(f"원소 개수가 {n}개가 아닙니다. 다시 입력하세요.")
                     continue
                 try:
-                    row = [float(x) for x in parts]
+                    row = [int(x) for x in parts]
                 except ValueError:
-                    print("올바른 숫자 형식을 입력하세요.")
-                    print("허용되는 형식: 정수(1, -5), 소수점(2.5, -3.14), 과학적 표기법(1.23e-4)")
-                    print("예: 1 2.5 -3 또는 1.5 2.7 -3.14 또는 1.23e-4 5.67e2 -8.9e-1")
+                    print("올바른 정수 형식을 입력하세요.")
+                    print("허용되는 형식: 정수(1, -5, 0, 42)만 입력 가능합니다.")
+                    print("소수점이나 과학적 표기법은 사용할 수 없습니다.")
+                    print("예: 1 2 -3 또는 -1 0 5 또는 10 -20 30")
                     continue
                 mat.append(row)
                 break
@@ -178,7 +178,7 @@ def _validate_rectangular(data: Matrix) -> Matrix:
 
 def read_matrix_from_csv(path: str) -> Matrix:
     """
-    CSV 파일에서 행렬을 읽어 float 행렬로 반환한다.
+    CSV 파일에서 행렬을 읽어 int 행렬로 반환한다.
     """
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.reader(f)
@@ -187,9 +187,9 @@ def read_matrix_from_csv(path: str) -> Matrix:
             if not row:
                 continue
             try:
-                data.append([float(x) for x in row])
+                data.append([int(x) for x in row])
             except ValueError as exc:
-                raise ValueError(f"CSV에 숫자가 아닌 값이 포함되어 있습니다: {row}") from exc
+                raise ValueError(f"CSV에 정수가 아닌 값이 포함되어 있습니다: {row}") from exc
     return _validate_rectangular(data)
 
 
@@ -205,9 +205,9 @@ def read_matrix_from_text(path: str, delimiter: Optional[str] = None) -> Matrix:
                 continue
             parts = stripped.split(delimiter) if delimiter else stripped.split()
             try:
-                data.append([float(x) for x in parts])
+                data.append([int(x) for x in parts])
             except ValueError as exc:
-                raise ValueError(f"텍스트 파일에 숫자가 아닌 값이 있습니다: {parts}") from exc
+                raise ValueError(f"텍스트 파일에 정수가 아닌 값이 있습니다: {parts}") from exc
     return _validate_rectangular(data)
 
 
